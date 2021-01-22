@@ -398,6 +398,10 @@ class _ReferenceStorageServicer(buildstream_pb2_grpc.ReferenceStorageServicer):
             context.set_code(grpc.StatusCode.PERMISSION_DENIED)
             return response
 
+        if request.digest.ByteSize() == 0:
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            return response
+
         for key in request.keys:
             self.cas.set_ref(key, request.digest)
 
