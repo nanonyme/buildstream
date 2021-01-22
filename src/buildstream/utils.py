@@ -698,10 +698,9 @@ def save_file_atomic(
     fd, tempname = tempfile.mkstemp(dir=tempdir)
     # Apply mode allowed by umask
     os.fchmod(fd, 0o666 & ~_UMASK)
-    os.close(fd)
 
-    f = open(
-        tempname,
+    f = os.fdopen(
+        fd,
         mode=mode,
         buffering=buffering,
         encoding=encoding,
