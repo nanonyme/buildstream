@@ -379,6 +379,9 @@ class _ReferenceStorageServicer(buildstream_pb2_grpc.ReferenceStorageServicer):
             tree = self.cas.resolve_ref(request.key, update_mtime=True)
             try:
                 self.cas.update_tree_mtime(tree)
+            except IsADirectoryError:
+                logging.exception("Failure resolving %s", request.key)
+                context.set_code(grpc.StatusCode.NOT_FOUND)
             except FileNotFoundError:
                 self.cas.remove(request.key, defer_prune=True)
                 context.set_code(grpc.StatusCode.NOT_FOUND)
